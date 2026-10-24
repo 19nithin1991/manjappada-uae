@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Manjappada (UAE Wing) · ISL 2026/27 KBFC Score Predictor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0b0e1f;
+      --bg-card: #141930;
+      --mp-yellow: #f5c418;
+    }
+    body {
+      background-color: var(--bg-deep);
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .font-display { font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 0.03em; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen pb-16 selection:bg-[#f5c418] selection:text-[#0b0e1f]">
+
+  <main class="max-w-[460px] mx-auto px-4 pt-5">
+
+    <!-- HEADER: MANJAPPADA UAE WING -->
+    <header class="space-y-3.5">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5">
+          <div class="w-16 h-16 rounded-full shrink-0 flex items-center justify-center overflow-hidden shadow-lg">
+            <img src="OIP.webp" alt="Manjappada Logo" class="w-full h-full object-contain" onerror="this.style.display='none'; document.getElementById('fallback-mp-logo').classList.remove('hidden');" />
+            <div id="fallback-mp-logo" class="hidden w-16 h-16 rounded-full bg-[#f5e600] border-2 border-[#272d86] flex items-center justify-center text-[#1e247b] font-display font-bold text-xs text-center leading-tight p-1">MANJAPPADA</div>
+          </div>
+          <div>
+            <h2 class="font-display text-[22px] leading-[1.06] text-[#f5c418] tracking-wide uppercase">
+              MANJAPPADA (UAE WING)<br />PRESENTS
+            </h2>
+          </div>
+        </div>
+        <div class="flex flex-col items-end">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Active
+          </span>
+          <span class="text-[10px] text-[#7c85a6] mt-0.5">UAE Time (GST)</span>
+        </div>
+      </div>
+
+      <!-- KBFC CREST & TITLE -->
+      <div class="flex items-center gap-3.5 pt-0.5">
+        <div class="w-14 h-16 shrink-0 flex items-center justify-center">
+          <img src="https://www.indiansuperleague.com/static-assets/images/club/500/KBFC.png?v=100.89" alt="Kerala Blasters" class="w-13 h-13 object-contain drop-shadow" />
+        </div>
+        <div>
+          <p class="text-[12px] font-medium tracking-[0.12em] text-[#b0b8d4] uppercase">
+            ISL 2026/27 · KERALA BLASTERS
+          </p>
+          <h1 class="font-display text-[35px] leading-[0.95] text-white tracking-wider uppercase mt-0.5">
+            SCORE PREDICTOR
+          </h1>
+        </div>
+      </div>
+
+      <!-- SCORING PILLS -->
+      <div class="flex flex-wrap items-center gap-2.5 pt-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#191c26] border border-[#3d3928] text-[12px]">
+          <span class="font-extrabold text-[#f5c418]">3</span>
+          <span class="text-[#c8cede]">correct result</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#191c26] border border-[#3d3928] text-[12px]">
+          <span class="font-extrabold text-[#f5c418]">4</span>
+          <span class="text-[#c8cede]">exact goal margin</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#191c26] border border-[#3d3928] text-[12px]">
+          <span class="font-extrabold text-[#f5c418]">5</span>
+          <span class="text-[#c8cede]">exact score</span>
+        </div>
+      </div>
+
+      <!-- MAIN TABS -->
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <button id="tab-matches" onclick="switchTab('matches')" class="h-[46px] rounded-[12px] font-bold text-[15px] transition-all bg-[#f5c418] text-[#0b0e1f] shadow-md">
+          Matches
+        </button>
+        <button id="tab-leaderboard" onclick="switchTab('leaderboard')" class="h-[46px] rounded-[12px] font-bold text-[15px] transition-all bg-[#12172b] text-[#d5dbef] border border-[#1f2642]">
+          Leaderboard
+        </button>
+      </div>
+    </header>
+
+    <!-- TOAST ALERT -->
+    <div id="toast-box" class="hidden mt-4 rounded-xl bg-emerald-950/90 border border-emerald-500/40 px-4 py-3 text-xs text-emerald-200 flex items-center justify-between">
+      <span id="toast-text">Prediction saved!</span>
+      <button onclick="document.getElementById('toast-box').classList.add('hidden')" class="text-emerald-400 font-bold ml-3">✕</button>
+    </div>
+
+    <!-- VIEW 1: MATCHES -->
+    <section id="view-matches" class="mt-4 space-y-4">
+      <div class="rounded-[16px] bg-[#141930] border border-[#232a47] p-4 space-y-3.5 shadow-lg">
+        <div>
+          <label class="block text-[13px] font-semibold text-[#d2d8ec] mb-2">Mobile number</label>
+          <div class="flex gap-2.5">
+            <select id="fan-code" onchange="saveProfileLocally()" class="w-[100px] h-[46px] rounded-[10px] bg-[#0c1021] border border-[#222946] text-[#f5c418] font-bold text-[14px] px-2.5 focus:outline-none">
+              <option value="+971">🇦🇪 +971</option>
+              <option value="+974">🇶🇦 +974</option>
+              <option value="+966">🇸🇦 +966</option>
+              <option value="+968">🇴🇲 +968</option>
+              <option value="+965">🇰🇼 +965</option>
+              <option value="+973">🇧🇭 +973</option>
+              <option value="+91">🇮🇳 +91</option>
+            </select>
+            <input id="fan-mobile" type="tel" placeholder="50 123 4567" oninput="saveProfileLocally()" class="flex-1 h-[46px] rounded-[10px] bg-[#0c1021] border border-[#222946] px-3.5 text-[15px] text-white placeholder-[#687296] focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[13px] font-semibold text-[#d2d8ec] mb-2">Name</label>
+          <input id="fan-name" type="text" placeholder="Your name" oninput="saveProfileLocally()" class="w-full h-[46px] rounded-[10px] bg-[#0c1021] border border-[#222946] px-3.5 text-[15px] text-white placeholder-[#687296] focus:outline-none" />
+        </div>
+
+        <label class="flex items-start gap-3 pt-0.5 cursor-pointer select-none">
+          <input id="fan-wa" type="checkbox" checked onchange="saveProfileLocally()" class="mt-0.5 w-5 h-5 rounded-[5px] bg-[#0c1021] border border-[#3a4368] accent-[#f5c418]" />
+          <span class="text-[13.5px] font-semibold text-[#dbe0f2] leading-snug">
+            Are you a member of the Manjappada UAE WhatsApp group?
+          </span>
+        </label>
+      </div>
+
+      <div id="next-game-banner"></div>
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="filter-bar"></div>
+      <div id="fixtures-list" class="space-y-4"></div>
+    </section>
+
+    <!-- VIEW 2: LEADERBOARD -->
+    <section id="view-leaderboard" class="hidden mt-4 space-y-4">
+      <div class="rounded-[16px] bg-[#141930] border border-[#232a47] p-4 space-y-3.5 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display text-2xl tracking-wide text-white uppercase">Manjappada UAE Standings</h2>
+            <p class="text-[11px] text-[#8d96b8]">Ranked by Points → Precision % → Goal Error</p>
+          </div>
+          <button onclick="renderLeaderboard()" class="px-3 py-1.5 rounded-lg bg-[#0c1021] border border-[#262f52] text-[11px] font-semibold text-[#f5c418]">
+            ↻ Refresh
+          </button>
+        </div>
+
+        <input id="lb-search" type="text" placeholder="Search supporter name..." oninput="renderLeaderboard()" class="w-full h-[42px] rounded-[10px] bg-[#0c1021] border border-[#222946] px-3.5 text-[13px] text-white placeholder-[#687296] focus:outline-none" />
+
+        <div id="leaderboard-rows" class="space-y-2 pt-1"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const CRESTS = {
+      KBFC: "https://www.indiansuperleague.com/static-assets/images/club/500/KBFC.png?v=100.89",
+      MCFC: "https://www.indiansuperleague.com/static-assets/images/club/500/MCFC.png?v=100.89",
+      CFC:  "https://www.indiansuperleague.com/static-assets/images/club/500/CFC.png?v=100.89",
+      FCG:  "https://www.indiansuperleague.com/static-assets/images/club/500/FCG.png?v=100.89",
+      CBSC: "https://www.indiansuperleague.com/static-assets/images/club/500/CBSC.png?v=100.89",
+      SCD:  "https://www.indiansuperleague.com/static-assets/images/club/500/SCD.png?v=100.89",
+      PFC:  "https://www.indiansuperleague.com/static-assets/images/club/500/PFC.png?v=100.89",
+      OFC:  "https://www.indiansuperleague.com/static-assets/images/club/500/OFC.png?v=100.89",
+      BFC:  "https://www.indiansuperleague.com/static-assets/images/club/500/BFC.png?v=100.89",
+      MBSG: "https://www.indiansuperleague.com/static-assets/images/club/500/MBSG.png?v=100.89",
+      EBFC: "https://www.indiansuperleague.com/static-assets/images/club/500/EBFC.png?v=100.89",
+      NEUFC:"https://www.indiansuperleague.com/static-assets/images/club/500/NEUFC.png?v=100.89",
+      KSHI: "https://www.indiansuperleague.com/static-assets/images/club/500/KSHI.png?v=100.89"
+    };
+
+    let matches = JSON.parse(localStorage.getItem('mp_uae_matches') || JSON.stringify([
+      { id: "kbfc-mw3", mw: "MW 3", venueType: "Home", homeId: "KBFC", homeName: "Kerala Blasters", awayId: "MCFC", awayName: "Mumbai City", stadium: "JLN Stadium, Kochi", kickoffIso: "2026-10-25T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw4", mw: "MW 4", venueType: "Away", homeId: "CFC", homeName: "Chennaiyin FC", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "JLN Stadium, Chennai", kickoffIso: "2026-10-31T17:00:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw7", mw: "MW 7", venueType: "Away", homeId: "FCG", homeName: "FC Goa", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "Fatorda Stadium, Margao", kickoffIso: "2026-11-06T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw8", mw: "MW 8", venueType: "Home", homeId: "KBFC", homeName: "Kerala Blasters", awayId: "CBSC", awayName: "Churchill Brothers", stadium: "JLN Stadium, Kochi", kickoffIso: "2026-11-15T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw9", mw: "MW 9", venueType: "Home", homeId: "KBFC", homeName: "Kerala Blasters", awayId: "SCD", awayName: "Sporting Club Delhi", stadium: "JLN Stadium, Kochi", kickoffIso: "2026-11-21T17:00:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw10", mw: "MW 10", venueType: "Home", homeId: "KBFC", homeName: "Kerala Blasters", awayId: "PFC", awayName: "Punjab FC", stadium: "JLN Stadium, Kochi", kickoffIso: "2026-12-06T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw11", mw: "MW 11", venueType: "Away", homeId: "OFC", homeName: "Odisha FC", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "Kalinga Stadium, Bhubaneswar", kickoffIso: "2026-12-12T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw12", mw: "MW 12", venueType: "Away", homeId: "BFC", homeName: "Bengaluru FC", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "Sree Kanteerava Stadium, Bengaluru", kickoffIso: "2026-12-19T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw13", mw: "MW 13", venueType: "Away", homeId: "MBSG", homeName: "Mohun Bagan SG", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "VYBK Stadium, Kolkata", kickoffIso: "2026-12-26T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw14", mw: "MW 14", venueType: "Home", homeId: "KBFC", homeName: "Kerala Blasters", awayId: "EBFC", awayName: "East Bengal FC", stadium: "JLN Stadium, Kochi", kickoffIso: "2026-12-30T19:30:00+05:30", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw2", mw: "MW 2", venueType: "Away", homeId: "NEUFC", homeName: "NorthEast United FC", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "IG Athletic Stadium, Guwahati", kickoffIso: "2026-10-18T19:30:00+05:30", status: "completed", finalHome: 4, finalAway: 1 },
+      { id: "kbfc-mw1", mw: "MW 1", venueType: "Away", homeId: "KSHI", homeName: "Inter Kashi FC", awayId: "KBFC", awayName: "Kerala Blasters", stadium: "Kalinga Stadium, Bhubaneswar", kickoffIso: "2026-10-11T17:00:00+05:30", status: "completed", finalHome: 0, finalAway: 2 }
+    ]));
+
+    let draftScores = {};
+    let lockedPicksLocal = JSON.parse(localStorage.getItem('mp_uae_picks') || '{}');
+    let predictionsStore = JSON.parse(localStorage.getItem('mp_uae_predictions_store') || '{}');
+    let currentFilter = "upcoming";
+
+    const OPEN_WINDOW_MS = 48 * 60 * 60 * 1000;
+    const LOCK_BEFORE_MS = 10 * 60 * 1000;
+
+    function getMatchWindowState(m) {
+      if (m.status === "completed" || (m.finalHome !== null && m.finalAway !== null)) return { state: "completed" };
+      const now = Date.now();
+      const ko = new Date(m.kickoffIso).getTime();
+      const lockAt = ko - LOCK_BEFORE_MS;
+      const openAt = ko - OPEN_WINDOW_MS;
+      if (now >= lockAt) return { state: "closed" };
+      if (now >= openAt && now < lockAt) return { state: "open", lockAt };
+      return { state: "upcoming_locked", openAt };
+    }
+
+    function formatUaeDate(iso) {
+      const d = new Date(iso);
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dubai', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(d);
+      const map = {}; parts.forEach(p => map[p.type] = p.value);
+      return { full: `${map.weekday}, ${map.day} ${map.month}, ${map.hour}:${map.minute} ${(map.dayPeriod||'').toLowerCase()} UAE time`, timeOnly: `${map.hour}:${map.minute} ${(map.dayPeriod||'').toLowerCase()} UAE time` };
+    }
+
+    function formatDuration(ms) {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      return { d: Math.floor(s / 86400), h: Math.floor((s % 86400) / 3600), m: Math.floor((s % 3600) / 60), sec: s % 60, totalHours: Math.floor(s / 3600) };
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toast-box');
+      document.getElementById('toast-text').textContent = msg;
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.add('hidden'), 4000);
+    }
+
+    function loadProfileLocally() {
+      const savedProfile = JSON.parse(localStorage.getItem('mp_uae_profile') || '{}');
+      if (savedProfile.code) document.getElementById('fan-code').value = savedProfile.code;
+      if (savedProfile.mobile) document.getElementById('fan-mobile').value = savedProfile.mobile;
+      if (savedProfile.name) document.getElementById('fan-name').value = savedProfile.name;
+      if (typeof savedProfile.wa === 'boolean') document.getElementById('fan-wa').checked = savedProfile.wa;
+    }
+
+    function saveProfileLocally() {
+      const profile = { code: document.getElementById('fan-code').value, mobile: document.getElementById('fan-mobile').value.trim(), name: document.getElementById('fan-name').value.trim(), wa: document.getElementById('fan-wa').checked };
+      localStorage.setItem('mp_uae_profile', JSON.stringify(profile));
+    }
+
+    function switchTab(tab) {
+      const isMatches = tab === 'matches';
+      document.getElementById('view-matches').classList.toggle('hidden', !isMatches);
+      document.getElementById('view-leaderboard').classList.toggle('hidden', isMatches);
+      document.getElementById('tab-matches').className = isMatches ? "h-[46px] rounded-[12px] font-bold text-[15px] bg-[#f5c418] text-[#0b0e1f] shadow-md" : "h-[46px] rounded-[12px] font-bold text-[15px] bg-[#12172b] text-[#d5dbef] border border-[#1f2642]";
+      document.getElementById('tab-leaderboard').className = !isMatches ? "h-[46px] rounded-[12px] font-bold text-[15px] bg-[#f5c418] text-[#0b0e1f] shadow-md" : "h-[46px] rounded-[12px] font-bold text-[15px] bg-[#12172b] text-[#d5dbef] border border-[#1f2642]";
+      if (!isMatches) renderLeaderboard();
+    }
+
+    function adjustScore(matchId, side, delta) {
+      if (!draftScores[matchId]) {
+        const prev = lockedPicksLocal[matchId];
+        draftScores[matchId] = prev ? { home: prev.homeScore, away: prev.awayScore } : { home: 0, away: 0 };
+      }
+      draftScores[matchId][side] = Math.max(0, Math.min(15, draftScores[matchId][side] + delta));
+      document.getElementById(`score-${side}-${matchId}`).textContent = draftScores[matchId][side];
+    }
+
+    function submitPrediction(matchId) {
+      const code = document.getElementById('fan-code').value;
+      const mobileRaw = document.getElementById('fan-mobile').value.replace(/\s+/g, '');
+      const name = document.getElementById('fan-name').value.trim();
+      const waMember = document.getElementById('fan-wa').checked;
+
+      if (!mobileRaw || mobileRaw.length < 7) { showToast("Please enter a valid mobile number."); document.getElementById('fan-mobile').focus(); return; }
+      if (!name || name.length < 2) { showToast("Please enter your name."); document.getElementById('fan-name').focus(); return; }
+
+      const m = matches.find(x => x.id === matchId);
+      if (!m || getMatchWindowState(m).state !== 'open') { showToast("Predictions are locked."); return; }
+
+      const pick = draftScores[matchId] || (lockedPicksLocal[matchId] ? { home: lockedPicksLocal[matchId].homeScore, away: lockedPicksLocal[matchId].awayScore } : { home: 0, away: 0 });
+      lockedPicksLocal[matchId] = { homeScore: pick.home, awayScore: pick.away, ts: Date.now() };
+      localStorage.setItem('mp_uae_picks', JSON.stringify(lockedPicksLocal));
+      saveProfileLocally();
+
+      const userKey = code + ':' + mobileRaw;
+      predictionsStore[userKey + '_' + matchId] = { userKey, matchId, countryCode: code, mobile: mobileRaw, name, waMember, homeScore: pick.home, awayScore: pick.away };
+      localStorage.setItem('mp_uae_predictions_store', JSON.stringify(predictionsStore));
+
+      showToast(`Locked in: ${m.homeName} ${pick.home} - ${pick.away} ${m.awayName}!`);
+      renderFixtures();
+    }
+
+    function renderNextGameBanner() {
+      const container = document.getElementById('next-game-banner');
+      const upcoming = matches.filter(m => getMatchWindowState(m).state !== 'completed').sort((a, b) => new Date(a.kickoffIso) - new Date(b.kickoffIso));
+      if (!upcoming.length) { container.innerHTML = ''; return; }
+      const next = upcoming[0];
+      const win = getMatchWindowState(next);
+      const cd = formatDuration(new Date(next.kickoffIso).getTime() - Date.now());
+      container.innerHTML = `
+        <div class="rounded-[16px] bg-gradient-to-b from-[#182042] to-[#12172e] border border-[#2c3663] p-4 shadow-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#f5c418]">⚡ Next KBFC Matchday · ${next.mw}</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${win.state === 'open' ? 'bg-[#11382f] text-[#34d399]' : 'bg-[#252c44] text-[#b4bddb]'}">${win.state === 'open' ? 'Open Now' : 'Opens 48h Prior'}</span>
+          </div>
+          <p class="text-[13px] font-bold text-white">${next.homeName} vs ${next.awayName}</p>
+          <p class="text-[11.5px] text-[#959ec0] mt-0.5">${formatUaeDate(next.kickoffIso).full} · ${next.stadium}</p>
+          <div class="grid grid-cols-4 gap-2 mt-3 text-center">
+            <div class="rounded-lg bg-[#0b0e1f]/90 border border-[#252d50] py-1.5"><div class="font-display text-2xl text-[#f5c418]">${cd.d}</div><div class="text-[10px] text-[#7c85a6]">Days</div></div>
+            <div class="rounded-lg bg-[#0b0e1f]/90 border border-[#252d50] py-1.5"><div class="font-display text-2xl text-[#f5c418]">${cd.h}</div><div class="text-[10px] text-[#7c85a6]">Hours</div></div>
+            <div class="rounded-lg bg-[#0b0e1f]/90 border border-[#252d50] py-1.5"><div class="font-display text-2xl text-[#f5c418]">${cd.m}</div><div class="text-[10px] text-[#7c85a6]">Mins</div></div>
+            <div class="rounded-lg bg-[#0b0e1f]/90 border border-[#252d50] py-1.5"><div class="font-display text-2xl text-[#f5c418]">${cd.sec}</div><div class="text-[10px] text-[#7c85a6]">Secs</div></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFilterBar() {
+      document.getElementById('filter-bar').innerHTML = [
+        { id: 'upcoming', label: 'Upcoming KBFC (10)' },
+        { id: 'open', label: 'Open Now' },
+        { id: 'completed', label: 'Completed FT (2)' }
+      ].map(f => `<button onclick="currentFilter='${f.id}'; renderFixtures();" class="px-3.5 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all ${currentFilter === f.id ? 'bg-[#f5c418] text-[#0b0e1f]' : 'bg-[#141930] text-[#9aa3c4] border border-[#232a47]'}">${f.label}</button>`).join('');
+    }
+
+    function renderFixtures() {
+      const list = document.getElementById('fixtures-list');
+      const filtered = matches.filter(m => {
+        const st = getMatchWindowState(m).state;
+        if (currentFilter === 'open') return st === 'open';
+        if (currentFilter === 'completed') return st === 'completed';
+        return st !== 'completed';
+      });
+
+      if (!filtered.length) { list.innerHTML = `<div class="rounded-[16px] bg-[#141930] border border-[#232a47] p-6 text-center text-sm text-[#8d96b8]">No matches in this filter right now.</div>`; return; }
+
+      list.innerHTML = filtered.map(m => {
+        const win = getMatchWindowState(m);
+        const koStr = formatUaeDate(m.kickoffIso).full;
+        const savedPick = lockedPicksLocal[m.id];
+        const curScores = draftScores[m.id] || (savedPick ? { home: savedPick.homeScore, away: savedPick.awayScore } : { home: 0, away: 0 });
+
+        let banner = '';
+        if (win.state === 'open') {
+          const rem = formatDuration(win.lockAt - Date.now());
+          banner = `<div class="rounded-[12px] bg-[#2a2927] border border-[#615328] px-3.5 py-2.5 text-center my-3"><p class="text-[13px] text-white font-bold">${rem.totalHours}h ${rem.m}m ${rem.sec}s remaining</p></div>`;
+        } else if (win.state === 'upcoming_locked') {
+          banner = `<div class="rounded-[12px] bg-[#101529] border border-[#232b4a] px-3.5 py-2.5 text-center my-3"><p class="text-[12.5px] text-[#9da4be]">Opens 48h before kickoff</p></div>`;
+        }
+
+        const steppers = win.state === 'open' ? `
+          <div class="space-y-2.5 mt-4">
+            <div class="rounded-[12px] bg-[#1a203b] p-3.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5"><img src="${CRESTS[m.homeId]}" class="w-6 h-6 object-contain" /><span class="font-bold text-sm">${m.homeName}</span></div>
+              <div class="flex items-center gap-2">
+                <button onclick="adjustScore('${m.id}', 'home', -1)" class="w-10 h-10 rounded-lg bg-[#3267f6] text-white font-bold text-xl">−</button>
+                <div class="w-12 h-10 bg-[#131726] border border-[#4f4728] rounded-lg flex items-center justify-center font-display text-xl text-[#f5c418]" id="score-home-${m.id}">${curScores.home}</div>
+                <button onclick="adjustScore('${m.id}', 'home', 1)" class="w-10 h-10 rounded-lg bg-[#3267f6] text-white font-bold text-xl">+</button>
+              </div>
+            </div>
+            <div class="rounded-[12px] bg-[#1a203b] p-3.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5"><img src="${CRESTS[m.awayId]}" class="w-6 h-6 object-contain" /><span class="font-bold text-sm">${m.awayName}</span></div>
+              <div class="flex items-center gap-2">
+                <button onclick="adjustScore('${m.id}', 'away', -1)" class="w-10 h-10 rounded-lg bg-[#3267f6] text-white font-bold text-xl">−</button>
+                <div class="w-12 h-10 bg-[#131726] border border-[#4f4728] rounded-lg flex items-center justify-center font-display text-xl text-[#f5c418]" id="score-away-${m.id}">${curScores.away}</div>
+                <button onclick="adjustScore('${m.id}', 'away', 1)" class="w-10 h-10 rounded-lg bg-[#3267f6] text-white font-bold text-xl">+</button>
+              </div>
+            </div>
+            <button onclick="submitPrediction('${m.id}')" class="w-full h-[46px] rounded-[12px] bg-[#f5c418] text-[#0b0e1f] font-extrabold text-[15px] shadow-md">${savedPick ? 'Update Prediction' : 'Lock in Prediction'}</button>
+            ${savedPick ? `<p class="text-center text-[11.5px] text-emerald-400 font-semibold">✓ Locked: ${savedPick.homeScore} - ${savedPick.awayScore}</p>` : ''}
+          </div>
+        ` : '';
+
+        return `
+          <article class="rounded-[16px] bg-[#141930] border border-[#232a47] p-4 shadow-lg">
+            <div class="flex justify-between mb-2"><span class="px-3 py-1 rounded-full text-[11px] font-bold ${m.venueType==='Home'?'bg-blue-950 text-blue-400':'bg-amber-950 text-amber-400'}">${m.venueType}</span><span class="text-[11px] font-bold text-slate-400">${win.state==='completed'?`FT ${m.finalHome}-${m.finalAway}`:m.mw}</span></div>
+            <p class="text-[13px] text-[#9da4be]">${koStr}</p>
+            ${banner}
+            <div class="flex items-center justify-center gap-5 my-3">
+              <img src="${CRESTS[m.homeId]}" class="w-14 h-14 object-contain" />
+              <span class="font-display text-xl text-[#8d96b8]">VS</span>
+              <img src="${CRESTS[m.awayId]}" class="w-14 h-14 object-contain" />
+            </div>
+            <h3 class="font-display text-2xl text-center text-white">${m.homeName} VS ${m.awayName}</h3>
+            <p class="text-[13px] text-center text-[#8d96b8]">${m.stadium}</p>
+            ${steppers}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderLeaderboard() {
+      const container = document.getElementById('leaderboard-rows');
+      const q = (document.getElementById('lb-search')?.value || '').toLowerCase().trim();
+      const users = {};
+      const matchMap = {}; matches.forEach(m => matchMap[m.id] = m);
+
+      Object.values(predictionsStore).forEach(p => {
+        const uid = p.userKey;
+        if (!users[uid]) {
+          const mob = (p.mobile||'').replace(/[^0-9]/g,'');
+          users[uid] = { name: p.name, maskedPhone: (p.countryCode||'+971') + ' ' + (mob.length>4?mob.substring(0,2)+'***'+mob.substring(mob.length-3):'***'), waMember: !!p.waMember, points: 0, played: 0, totalGoalErr: 0, precisionSum: 0 };
+        }
+        const m = matchMap[p.matchId];
+        if (!m || m.status !== 'completed' || m.finalHome === null) return;
+        const fh = Number(m.finalHome), fa = Number(m.finalAway), ph = Number(p.homeScore), pa = Number(p.awayScore);
+        const err = Math.abs(fh - ph) + Math.abs(fa - pa);
+        users[uid].played++; users[uid].totalGoalErr += err;
+        const diff = (fh-fa) - (ph-pa), sign = (fh-fa)===0?0:((fh-fa)>0?1:-1), pSign = (ph-pa)===0?0:((ph-pa)>0?1:-1);
+        if (fh === ph && fa === pa) { users[uid].points += 5; users[uid].precisionSum += 100; }
+        else if (sign === pSign && diff === 0) { users[uid].points += 4; users[uid].precisionSum += Math.max(65, 90 - err * 8); }
+        else if (sign === pSign) { users[uid].points += 3; users[uid].precisionSum += Math.max(45, 75 - err * 10); }
+        else { users[uid].precisionSum += Math.max(0, 35 - err * 10); }
+      });
+
+      const board = Object.values(users).map(u => ({ ...u, precisionPct: u.played > 0 ? Math.round(u.precisionSum / u.played) : 0, avgGoalErr: u.played > 0 ? Number((u.totalGoalErr / u.played).toFixed(1)) : 0 }));
+      board.sort((a, b) => b.points !== a.points ? b.points - a.points : (b.precisionPct !== a.precisionPct ? b.precisionPct - a.precisionPct : a.avgGoalErr - b.avgGoalErr));
+
+      const filtered = board.filter(u => !q || u.name.toLowerCase().includes(q));
+      if (!filtered.length) { container.innerHTML = `<div class="p-6 text-center text-xs text-[#8d96b8]">No graded predictions yet.</div>`; return; }
+
+      container.innerHTML = filtered.map((u, i) => `
+        <div class="rounded-xl bg-[#0c1021] border border-[#222946] p-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center ${i===0?'bg-[#f5c418] text-black':'bg-[#141930] text-slate-300'}">${i+1}</span>
+            <div><p class="font-bold text-sm text-white">${u.name} ${u.waMember?'<span class="text-[10px] text-emerald-400">WA</span>':''}</p><p class="text-[11px] text-[#7c85a6]">${u.maskedPhone} · ${u.played} picks</p></div>
+          </div>
+          <div class="text-right"><div class="font-display text-2xl text-[#f5c418]">${u.points} PTS</div><div class="text-[10px] text-emerald-400 font-semibold">${u.precisionPct}% Precision</div></div>
+        </div>
+      `).join('');
+    }
+
+    setInterval(() => renderNextGameBanner(), 1000);
+    loadProfileLocally();
+    renderNextGameBanner();
+    renderFilterBar();
+    renderFixtures();
+  </script>
+</body>
+</html>

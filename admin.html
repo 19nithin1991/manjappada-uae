@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manjappada UAE · Admin Control Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #0b0e1f; color: #ffffff; font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Bebas Neue', Impact, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+  <!-- PASSWORD GATE -->
+  <div id="auth-box" class="w-full max-w-sm rounded-[20px] bg-[#141930] border border-[#2c3663] p-6 space-y-4 shadow-2xl text-center">
+    <h2 class="font-display text-3xl text-[#f5c418]">🔒 Admin Portal</h2>
+    <p class="text-xs text-[#9da4be]">Enter Admin PIN to access match grading & controls.</p>
+    <input id="admin-pin" type="password" placeholder="Enter PIN (1920)" class="w-full h-[46px] rounded-[10px] bg-[#0c1021] border border-[#222946] px-3 text-center text-lg text-white focus:outline-none focus:border-[#f5c418]" />
+    <button onclick="unlockAdmin()" class="w-full h-[46px] rounded-[10px] bg-[#f5c418] text-[#0b0e1f] font-bold text-base shadow-md">Unlock Panel</button>
+    <a href="index.html" class="block text-xs text-[#8d96b8] hover:text-white pt-2">← Return to Public Predictor</a>
+  </div>
+
+  <!-- DASHBOARD PANEL (HIDDEN UNTIL UNLOCKED) -->
+  <div id="admin-dash" class="hidden w-full max-w-xl rounded-[20px] bg-[#141930] border border-[#2c3663] p-6 space-y-6 shadow-2xl">
+    <div class="flex items-center justify-between border-b border-[#232a47] pb-4">
+      <div>
+        <h2 class="font-display text-3xl text-[#f5c418]">⚙️ Admin Control Panel</h2>
+        <p class="text-xs text-[#8d96b8]">Grade match results & update community standings</p>
+      </div>
+      <a href="index.html" class="px-3.5 py-2 rounded-xl bg-[#0c1021] border border-[#222946] text-xs font-semibold text-slate-300 hover:text-white">View Public Site →</a>
+    </div>
+
+    <div class="space-y-3">
+      <h3 class="text-sm font-bold text-white uppercase tracking-wider">Matchday Results Grader</h3>
+      <p class="text-xs text-[#8d96b8]">Enter official full-time scores to automatically calculate points and update the public leaderboard:</p>
+      <div id="admin-matches-list" class="space-y-2.5 max-h-[350px] overflow-y-auto pr-1"></div>
+    </div>
+
+    <div class="border-t border-[#232a47] pt-4 flex gap-3">
+      <button onclick="exportData()" class="flex-1 py-3 rounded-xl bg-[#3267f6] text-white font-bold text-xs shadow-md">Export Supporter Backup JSON</button>
+      <button onclick="resetData()" class="px-5 py-3 rounded-xl bg-red-950/60 border border-red-500/30 text-red-300 font-bold text-xs">Reset All Data</button>
+    </div>
+  </div>
+
+  <script>
+    let matches = JSON.parse(localStorage.getItem('mp_uae_matches') || JSON.stringify([
+      { id: "kbfc-mw3", mw: "MW 3", homeName: "Kerala Blasters", awayName: "Mumbai City", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw4", mw: "MW 4", homeName: "Chennaiyin FC", awayName: "Kerala Blasters", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw7", mw: "MW 7", homeName: "FC Goa", awayName: "Kerala Blasters", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw8", mw: "MW 8", homeName: "Kerala Blasters", awayName: "Churchill Brothers", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw9", mw: "MW 9", homeName: "Kerala Blasters", awayName: "Sporting Club Delhi", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw10", mw: "MW 10", homeName: "Kerala Blasters", awayName: "Punjab FC", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw11", mw: "MW 11", homeName: "Odisha FC", awayName: "Kerala Blasters", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw12", mw: "MW 12", homeName: "Bengaluru FC", awayName: "Kerala Blasters", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw13", mw: "MW 13", homeName: "Mohun Bagan SG", awayName: "Kerala Blasters", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw14", mw: "MW 14", homeName: "Kerala Blasters", awayName: "East Bengal FC", status: "upcoming", finalHome: null, finalAway: null },
+      { id: "kbfc-mw2", mw: "MW 2", homeName: "NorthEast United FC", awayName: "Kerala Blasters", status: "completed", finalHome: 4, finalAway: 1 },
+      { id: "kbfc-mw1", mw: "MW 1", homeName: "Inter Kashi FC", awayName: "Kerala Blasters", status: "completed", finalHome: 0, finalAway: 2 }
+    ]));
+
+    function unlockAdmin() {
+      const pin = document.getElementById('admin-pin').value;
+      if (pin === '1920') {
+        document.getElementById('auth-box').classList.add('hidden');
+        document.getElementById('admin-dash').classList.remove('hidden');
+        renderAdminMatches();
+      } else {
+        alert('Incorrect Admin PIN');
+      }
+    }
+
+    function renderAdminMatches() {
+      document.getElementById('admin-matches-list').innerHTML = matches.map(m => `
+        <div class="rounded-xl bg-[#0c1021] border border-[#222946] p-3 flex items-center justify-between gap-2">
+          <div><p class="text-xs font-bold text-white">${m.homeName} vs ${m.awayName}</p><p class="text-[10px] text-[#8d96b8]">${m.mw} · Status: ${m.status}</p></div>
+          <div class="flex items-center gap-1.5">
+            <input id="fh-${m.id}" type="number" min="0" max="15" value="${m.finalHome !== null ? m.finalHome : ''}" placeholder="H" class="w-12 h-8 rounded bg-[#141930] border border-[#2f385c] text-center text-xs text-white" />
+            <span class="text-xs text-[#8d96b8]">-</span>
+            <input id="fa-${m.id}" type="number" min="0" max="15" value="${m.finalAway !== null ? m.finalAway : ''}" placeholder="A" class="w-12 h-8 rounded bg-[#141930] border border-[#2f385c] text-center text-xs text-white" />
+            <button onclick="saveResult('${m.id}')" class="px-3 h-8 rounded bg-[#f5c418] text-[#0b0e1f] font-bold text-xs">Save</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveResult(matchId) {
+      const fh = document.getElementById(`fh-${matchId}`).value;
+      const fa = document.getElementById(`fa-${matchId}`).value;
+      const m = matches.find(x => x.id === matchId);
+      if (m && fh !== '' && fa !== '') {
+        m.finalHome = Number(fh);
+        m.finalAway = Number(fa);
+        m.status = 'completed';
+        localStorage.setItem('mp_uae_matches', JSON.stringify(matches));
+        alert(`Successfully graded ${m.homeName} vs ${m.awayName} as ${fh}-${fa}! Public leaderboard updated.`);
+        renderAdminMatches();
+      }
+    }
+
+    function exportData() {
+      const backup = { profile: localStorage.getItem('mp_uae_profile'), picks: localStorage.getItem('mp_uae_picks'), predictionsStore: localStorage.getItem('mp_uae_predictions_store') };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'manjappada_uae_backup.json'; a.click();
+    }
+
+    function resetData() {
+      if (confirm('Are you sure you want to reset all data?')) { localStorage.clear(); location.reload(); }
+    }
+  </script>
+</body>
+</html>
